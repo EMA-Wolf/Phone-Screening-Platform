@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Filter,
   LayoutGrid,
@@ -12,6 +13,7 @@ import {
 
 import { JobCard } from "@/components/jobs/jobCards";
 import { Button } from "@/components/ui/button";
+import { loadScreenings } from "@/lib/screenings-storage";
 import { cn } from "@/lib/utils";
 import type { Job } from "@/types/jobs.types";
 
@@ -20,6 +22,8 @@ type JobsDashboardProps = {
 };
 
 export function JobsDashboard({ jobs }: JobsDashboardProps) {
+  const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
   const [query, setQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [funnelOpen, setFunnelOpen] = useState(false);
@@ -28,6 +32,23 @@ export function JobsDashboard({ jobs }: JobsDashboardProps) {
   );
 
   const funnelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    queueMicrotask(() => {
+      setMounted(true);
+    });
+  }, []);
+
+  const screeningsByJob = useMemo(() => {
+    void pathname;
+    if (!mounted || typeof window === "undefined") return {};
+    const list = loadScreenings();
+    const counts: Record<string, number> = {};
+    for (const s of list) {
+      counts[s.jobId] = (counts[s.jobId] ?? 0) + 1;
+    }
+    return counts;
+  }, [mounted, pathname]);
 
   useEffect(() => {
     if (!funnelOpen) return;
@@ -326,7 +347,7 @@ export function JobsDashboard({ jobs }: JobsDashboardProps) {
               <li key={job.id} className="min-h-0">
                 <JobCard
                   job={job}
-                  screeningCount={0}
+                  screeningCount={screeningsByJob[job.id] ?? 0}
                   applicantCount={0}
                 />
               </li>
