@@ -32,3 +32,13 @@ export function appendScreening(screening: Screening): void {
   list.push(screening);
   saveScreenings(list);
 }
+
+/** Most recently created screening for a job (by `createdAt`). */
+export function latestScreeningForJob(jobId: string): Screening | undefined {
+  const forJob = readRaw().filter((s) => s.jobId === jobId);
+  if (forJob.length === 0) return undefined;
+  return [...forJob].sort(
+    (a, b) =>
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  )[0];
+}

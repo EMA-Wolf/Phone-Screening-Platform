@@ -29,3 +29,10 @@ export function findSubmission(
 ): Submission | undefined {
   return readRaw().find((s) => s.jobId === jobId && s.id === applicantId);
 }
+
+export function appendSubmission(submission: Submission): void {
+  if (typeof window === "undefined") return;
+  const list = readRaw();
+  list.push(submission);
+  window.localStorage.setItem(SUBMISSIONS_STORAGE_KEY, JSON.stringify(list));
+}
