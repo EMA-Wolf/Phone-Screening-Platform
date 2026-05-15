@@ -24,6 +24,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ApplicantDetailSkeleton } from "@/components/skeletons/applicant-detail-skeleton";
+import { AnalysisResultSkeleton } from "@/components/skeletons/analysis-result-skeleton";
 import { fetchMockAnalysis } from "@/lib/mock-analysis";
 import { loadScreenings } from "@/lib/screenings-storage";
 import { findSubmission } from "@/lib/submissions-storage";
@@ -159,11 +161,7 @@ export function ApplicantDetailView({
   }
 
   if (!hydrated || submission === undefined) {
-    return (
-      <div className="flex min-h-[40vh] items-center justify-center bg-zinc-50 text-sm text-zinc-500 dark:bg-zinc-950">
-        Loading…
-      </div>
-    );
+    return <ApplicantDetailSkeleton />;
   }
 
   if (submission === null) {
@@ -185,7 +183,7 @@ export function ApplicantDetailView({
   const answered = submission.answers.length;
 
   return (
-    <div className="flex min-h-full flex-col bg-zinc-100/90 dark:bg-zinc-950">
+    <div className="flex max-h-full flex-col bg-zinc-100/90 dark:bg-zinc-950">
       <header className="border-b border-zinc-200/80 bg-white dark:border-zinc-800 dark:bg-zinc-950">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <Link
@@ -493,6 +491,8 @@ export function ApplicantDetailView({
                     </Button>
                   </CardContent>
                 </Card>
+
+                {analyzing ? <AnalysisResultSkeleton /> : null}
 
                 {analysis ? (
                   <Card className="border-zinc-200/90 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950">

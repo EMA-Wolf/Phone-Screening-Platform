@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { JobCard } from "@/components/jobs/jobCards";
+import { JobCardSkeleton } from "@/components/skeletons/job-card-skeleton";
 import { Button } from "@/components/ui/button";
 import { loadSubmissions } from "@/lib/submissions-storage";
 import { loadScreenings } from "@/lib/screenings-storage";
@@ -357,11 +358,15 @@ export function JobsDashboard({ jobs }: JobsDashboardProps) {
           >
             {filtered.map((job) => (
               <li key={job.id} className="min-h-0">
-                <JobCard
-                  job={job}
-                  screeningCount={screeningsByJob[job.id] ?? 0}
-                  applicantCount={submissionsByJob[job.id] ?? 0}
-                />
+                {mounted ? (
+                  <JobCard
+                    job={job}
+                    screeningCount={screeningsByJob[job.id] ?? 0}
+                    applicantCount={submissionsByJob[job.id] ?? 0}
+                  />
+                ) : (
+                  <JobCardSkeleton />
+                )}
               </li>
             ))}
           </ul>

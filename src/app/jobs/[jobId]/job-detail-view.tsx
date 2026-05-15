@@ -25,6 +25,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { JobDetailStorageSkeleton } from "@/components/skeletons/job-detail-storage-skeleton";
 import { loadScreenings } from "@/lib/screenings-storage";
 import { submissionsForJob } from "@/lib/submissions-storage";
 import { cn } from "@/lib/utils";
@@ -212,6 +213,12 @@ export function JobDetailView({ job }: JobDetailViewProps) {
           {job.description}
         </p>
 
+        {!hydrated ? (
+          <div className="mt-8">
+            <JobDetailStorageSkeleton />
+          </div>
+        ) : null}
+
         {hydrated && screenings.length === 0 ? (
           <Card className="mt-6 border-dashed border-amber-500/40 bg-amber-500/5 shadow-sm dark:border-amber-500/30 dark:bg-amber-500/10">
             <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
@@ -243,6 +250,7 @@ export function JobDetailView({ job }: JobDetailViewProps) {
           </Card>
         ) : null}
 
+        {hydrated ? (
         <section
           className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
           aria-label="Job summary"
@@ -296,7 +304,9 @@ export function JobDetailView({ job }: JobDetailViewProps) {
             </CardContent>
           </Card>
         </section>
+        ) : null}
 
+        {hydrated ? (
         <Card className="mt-10 border-border/80 shadow-sm">
           <CardHeader className="flex flex-col gap-4 border-b border-border/60 bg-muted/20 py-5 sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-1">
@@ -426,6 +436,7 @@ export function JobDetailView({ job }: JobDetailViewProps) {
             ) : null}
           </CardContent>
         </Card>
+        ) : null}
       </main>
 
       <footer className="mt-auto border-t border-border/80 py-6 text-center text-xs text-muted-foreground">

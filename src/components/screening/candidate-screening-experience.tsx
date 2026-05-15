@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 
 import { AnimatedQuestionStep } from "@/components/screening/animated-question-step";
+import { CandidateScreeningSkeleton } from "@/components/skeletons/candidate-screening-skeleton";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -324,11 +325,7 @@ export function CandidateScreeningExperience({ job }: { job: Job }) {
 
   const wc = wordCount(draftText);
   if (!hydrated) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-white dark:bg-zinc-950">
-        <p className="text-sm text-zinc-500">Loading screening…</p>
-      </div>
-    );
+    return <CandidateScreeningSkeleton />;
   }
 
   if (!screening || total === 0) {
