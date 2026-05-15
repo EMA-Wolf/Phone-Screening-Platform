@@ -119,14 +119,17 @@ Recruiter and candidate flows share these keys so submissions appear on the job 
 | Unit tests (Jest + RTL) | Not implemented |
 | Working MediaRecorder audio | Not implemented (placeholder + optional text note) |
 
-## Trade-offs & assumptions
+  ## Trade-offs & Assumptions
 
-1. **Multiple screenings per job** — Candidates use the **latest** saved screening by `createdAt`. Older versions remain in storage but are not offered as a picker on the public link.
-2. **“Started” applicants** — Only **completed** submissions (saved on thank-you) appear in the recruiter list; partial in-progress answers are not stored.
-3. **Audio answers** — UI supports audio type; demo stores a placeholder string or optional note, not real recordings.
-4. **Analyze** — Static mock in `src/lib/mock-analysis.ts` with ~1.6s delay; no API.
-5. **Company name on candidate welcome** — “TechFlow Systems” is display copy for the mock UI; job title/location come from seed data.
-6. **Generate questions** — Template list tailored by job title, not per-job static maps (acceptable per brief).
+**Trade-offs**
+- **“Started” applicants**  — Only **completed** submissions (saved on thank-you) appear in the recruiter list; partial in-progress answers are not stored.
+- **Audio answers**  — UI supports audio type; demo stores a placeholder string or optional note, not real recordings.
+- **Analyze**  — Static mock in `src/lib/mock-analysis.ts` with ~1.6s delay; no API.
+
+**Assumptions**
+- **Company name on candidate welcome**  — “TechFlow Systems” is display copy for the mock UI; job title/location come from seed data.
+- **Generate questions**  — Template list tailored by job title, not per-job static maps (acceptable per brief).
+- **Multiple screenings per job**  — Candidates use the **latest** saved screening by `createdAt`. Older versions remain in storage but are not offered as a picker on the public link.
 
 ## Project structure (high level)
 
