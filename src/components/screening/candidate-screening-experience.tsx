@@ -40,6 +40,11 @@ import {
 import { appendSubmission } from "@/lib/submissions-storage";
 import { latestScreeningForJob } from "@/lib/screenings-storage";
 import { cn } from "@/lib/utils";
+import {
+  validateWelcomeForm,
+  welcomeFormIsValid,
+  type WelcomeFormErrors,
+} from "@/lib/welcome-form-validation";
 import type { Job } from "@/types/jobs.types";
 import type { Answer } from "@/types/submission.types";
 import type { Question, Screening } from "@/types/screening.types";
@@ -59,40 +64,6 @@ function wordCount(text: string): number {
   const t = text.trim();
   if (!t) return 0;
   return t.split(/\s+/).length;
-}
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-type WelcomeFormErrors = {
-  name?: string;
-  email?: string;
-};
-
-function validateWelcomeForm(
-  name: string,
-  email: string
-): WelcomeFormErrors {
-  const errors: WelcomeFormErrors = {};
-  const trimmedName = name.trim();
-  const trimmedEmail = email.trim();
-
-  if (!trimmedName) {
-    errors.name = "Please enter your full name.";
-  } else if (trimmedName.length < 2) {
-    errors.name = "Name must be at least 2 characters.";
-  }
-
-  if (!trimmedEmail) {
-    errors.email = "Please enter your email address.";
-  } else if (!EMAIL_PATTERN.test(trimmedEmail)) {
-    errors.email = "Enter a valid email address (e.g. alex@example.com).";
-  }
-
-  return errors;
-}
-
-function welcomeFormIsValid(name: string, email: string): boolean {
-  return Object.keys(validateWelcomeForm(name, email)).length === 0;
 }
 
 function formatSubmittedAt(iso: string): string {

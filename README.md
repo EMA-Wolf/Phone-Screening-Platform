@@ -19,6 +19,7 @@ Other scripts:
 npm run build   # production build
 npm run start   # serve production build
 npm run lint    # ESLint
+npm test        # Jest (welcome form validation)
 ```
 
 ## Tech stack
@@ -116,7 +117,7 @@ Recruiter and candidate flows share these keys so submissions appear on the job 
 | Drag-and-drop question reorder | Done — `@dnd-kit` on create-screening |
 | Light/dark mode toggle (persists in `aihrly_theme`) | Done — global toggle, top-right on all pages |
 | Framer Motion on question transitions | Done — slide/fade between questions (respects reduced motion) |
-| Unit tests (Jest + RTL) | Not implemented |
+| Unit tests (Jest + RTL) | Partial — Jest tests for `validateWelcomeForm` in `src/lib/welcome-form-validation.test.ts` |
 | Working MediaRecorder audio | Not implemented (placeholder + optional text note) |
 
   ## Trade-offs & Assumptions
