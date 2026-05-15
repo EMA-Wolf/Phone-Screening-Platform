@@ -18,7 +18,7 @@ export default async function ApplicantDetailPage({
     <ApplicantDetailView
       jobId={jobId}
       applicantId={applicantId}
-      jobTitle={job.title}
+      job={job}
     />
   );
 }
