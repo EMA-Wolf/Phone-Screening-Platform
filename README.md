@@ -159,7 +159,7 @@ To reset client data, clear `aihrly_screenings` and `aihrly_submissions` in DevT
 
 **Deployed app:** _[https://phone-screening-five.vercel.app/](https://phone-screening-five.vercel.app/)_
 
-**Time spent:** _[fill in, e.g. ~24 hours]_
+**Time spent:** ~11 hours 20 minutes (5 sessions: setup & jobs dashboard, recruiter flows, candidate screening, polish/bonus features, skeletons & final review)
 
 
 ---
