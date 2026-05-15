@@ -113,7 +113,7 @@ export function JobsDashboard({ jobs }: JobsDashboardProps) {
   }
 
   return (
-    <div className="flex min-h-full flex-col bg-muted/40">
+    <div className="flex max-h-full flex-col bg-muted/40">
       <header className="sticky top-0 z-20 border-b border-border/80 bg-card/95 backdrop-blur supports-backdrop-filter:bg-card/80">
         <div className="mx-auto flex h-14 max-w-6xl items-center px-4 sm:px-6">
           <Link

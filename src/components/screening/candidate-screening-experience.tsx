@@ -28,6 +28,7 @@ import {
   Volume2,
 } from "lucide-react";
 
+import { AnimatedQuestionStep } from "@/components/screening/animated-question-step";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -131,7 +132,7 @@ function AihrlyLogo({ className }: { className?: string }) {
         <span className="absolute size-6 rotate-45 rounded-sm bg-zinc-900 dark:bg-zinc-100" />
         <span className="absolute size-2.5 rotate-45 rounded-[2px] bg-white dark:bg-zinc-900" />
       </span>
-      <span className="text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+      <span className="text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-800">
         Aihrly
       </span>
     </div>
@@ -186,6 +187,7 @@ export function CandidateScreeningExperience({ job }: { job: Job }) {
   const [candidateName, setCandidateName] = useState("");
   const [candidateEmail, setCandidateEmail] = useState("");
   const [questionIndex, setQuestionIndex] = useState(0);
+  const [questionDirection, setQuestionDirection] = useState(1);
   const [answers, setAnswers] = useState<(Answer | null)[]>([]);
   const [draftText, setDraftText] = useState("");
   const [draftMode, setDraftMode] = useState<"text" | "audio">("text");
@@ -252,6 +254,7 @@ export function CandidateScreeningExperience({ job }: { job: Job }) {
     setWelcomeErrors({});
     const slots: (Answer | null)[] = Array.from({ length: total }, () => null);
     setAnswers(slots);
+    setQuestionDirection(1);
     setQuestionIndex(0);
     syncDraftForIndex(0, slots);
     setStep("question");
@@ -303,6 +306,7 @@ export function CandidateScreeningExperience({ job }: { job: Job }) {
     }
 
     const nextIdx = questionIndex + 1;
+    setQuestionDirection(1);
     setQuestionIndex(nextIdx);
     syncDraftForIndex(nextIdx, nextAnswers);
   };
@@ -310,6 +314,7 @@ export function CandidateScreeningExperience({ job }: { job: Job }) {
   const goPrevious = () => {
     if (questionIndex <= 0) return;
     const nextIdx = questionIndex - 1;
+    setQuestionDirection(-1);
     setQuestionIndex(nextIdx);
     syncDraftForIndex(nextIdx, answers);
   };
@@ -384,7 +389,7 @@ export function CandidateScreeningExperience({ job }: { job: Job }) {
   return (
     <div
       className={cn(
-        "relative flex min-h-screen flex-col",
+        "relative flex max-h-full flex-col",
         step === "complete"
           ? "bg-white dark:bg-zinc-950"
           : "bg-[radial-gradient(ellipse_at_top,_#f4f4f5_0%,_#e4e4e7_55%,_#d4d4d8_100%)] dark:bg-zinc-950"
@@ -664,13 +669,17 @@ export function CandidateScreeningExperience({ job }: { job: Job }) {
         ) : null}
 
         {step === "question" && currentQuestion ? (
-          <div className="w-full max-w-3xl pb-8">
-            <span className="inline-flex rounded-full border border-zinc-200 bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400">
-              Technical Screening
-            </span>
-            <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-400">
-              Progress: {questionIndex + 1 } / {total} Questions Completed
-            </p>
+          <div className="w-full max-w-3xl overflow-x-hidden pb-8">
+            <AnimatedQuestionStep
+              questionKey={currentQuestion.id}
+              direction={questionDirection}
+            >
+              <span className="inline-flex rounded-full border border-zinc-200 bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400">
+                Technical Screening
+              </span>
+              <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-400">
+                Progress: {questionIndex + 1} / {total} Questions Completed
+              </p>
             <h1 className="mt-4 text-2xl font-bold leading-snug tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-3xl">
               {currentQuestion.text}
             </h1>
@@ -740,6 +749,7 @@ export function CandidateScreeningExperience({ job }: { job: Job }) {
                 </div>
               )}
             </div>
+            </AnimatedQuestionStep>
 
             <div className="mt-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
               <button

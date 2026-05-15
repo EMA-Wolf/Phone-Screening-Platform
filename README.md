@@ -115,7 +115,7 @@ Recruiter and candidate flows share these keys so submissions appear on the job 
 | Back navigation in candidate flow | Done |
 | Drag-and-drop question reorder | Done — `@dnd-kit` on create-screening |
 | Light/dark mode toggle (persists in `aihrly_theme`) | Done — global toggle, top-right on all pages |
-| Framer Motion on question transitions | Not implemented |
+| Framer Motion on question transitions | Done — slide/fade between questions (respects reduced motion) |
 | Unit tests (Jest + RTL) | Not implemented |
 | Working MediaRecorder audio | Not implemented (placeholder + optional text note) |
 
