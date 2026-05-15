@@ -113,7 +113,7 @@ Recruiter and candidate flows share these keys so submissions appear on the job 
 | Search/filter on jobs | Done (search + title funnel) |
 | Applicant count on job cards | Done |
 | Back navigation in candidate flow | Done |
-| Drag-and-drop question reorder | Not implemented |
+| Drag-and-drop question reorder | Done — `@dnd-kit` on create-screening |
 | Light/dark mode toggle (persists in `aihrly_theme`) | Done — global toggle, top-right on all pages |
 | Framer Motion on question transitions | Not implemented |
 | Unit tests (Jest + RTL) | Not implemented |

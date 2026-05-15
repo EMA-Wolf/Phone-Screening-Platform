@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Info, Loader2, Plus, Sparkles, Trash2 } from "lucide-react";
+import { Info, Loader2, Plus, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,11 +14,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { SortableQuestionList } from "@/components/jobs/sortable-question-list";
 import { buildDefaultQuestions } from "@/data/default-screening-questions";
 import { appendScreening } from "@/lib/screenings-storage";
 import { cn } from "@/lib/utils";
 import type { Job } from "@/types/jobs.types";
-import type { Question, ResponseType } from "@/types/screening.types";
+import type { Question } from "@/types/screening.types";
 
 const GENERATE_DELAY_MS = 600;
 
@@ -97,7 +98,7 @@ export function CreateScreeningFlow({ jobs }: CreateScreeningFlowProps) {
   const saveButtonDisabled = !selectedJob || questions.length === 0;
 
   return (
-    <div className="flex min-h-full flex-col bg-muted/40">
+    <div className="flex max-h-full flex-col bg-muted/40">
       <header className="sticky top-0 z-20 border-b border-border/80 bg-card/95 backdrop-blur supports-backdrop-filter:bg-card/80">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <Link
@@ -217,70 +218,18 @@ export function CreateScreeningFlow({ jobs }: CreateScreeningFlowProps) {
                 <CardTitle className="text-base">Questions</CardTitle>
                 <CardDescription>
                   {questions.length} question
-                  {questions.length === 1 ? "" : "s"} — text or audio (audio is
-                  UI-only for candidates in this demo).
+                  {questions.length === 1 ? "" : "s"} — drag the handle to
+                  reorder. Text or audio (audio is UI-only for candidates).
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {questions.map((q, index) => (
-                  <div
-                    key={q.id}
-                    className="rounded-lg border border-border/80 bg-muted/20 p-4"
-                  >
-                    <div className="flex flex-wrap items-start justify-between gap-2">
-                      <span className="text-xs font-medium text-muted-foreground">
-                        Question {index + 1}
-                        {q.isCustom ? (
-                          <span className="text-foreground"> · Custom</span>
-                        ) : null}
-                      </span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon-xs"
-                        className="text-muted-foreground hover:text-destructive"
-                        aria-label={`Remove question ${index + 1}`}
-                        onClick={() => removeQuestion(q.id)}
-                      >
-                        <Trash2 className="size-3.5" />
-                      </Button>
-                    </div>
-                    <label className="sr-only" htmlFor={`q-text-${q.id}`}>
-                      Question {index + 1} text
-                    </label>
-                    <textarea
-                      id={`q-text-${q.id}`}
-                      value={q.text}
-                      onChange={(e) => {
-                        setSaveError(false);
-                        updateQuestion(q.id, { text: e.target.value });
-                      }}
-                      rows={3}
-                      className="mt-3 w-full resize-y rounded-md border border-border bg-card px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
-                    />
-                    <div className="mt-3 flex flex-wrap items-center gap-3">
-                      <label
-                        htmlFor={`q-type-${q.id}`}
-                        className="text-xs font-medium text-muted-foreground"
-                      >
-                        Response type
-                      </label>
-                      <select
-                        id={`q-type-${q.id}`}
-                        value={q.responseType}
-                        onChange={(e) =>
-                          updateQuestion(q.id, {
-                            responseType: e.target.value as ResponseType,
-                          })
-                        }
-                        className="h-9 rounded-md border border-border bg-card px-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
-                      >
-                        <option value="text">Text</option>
-                        <option value="audio">Audio (placeholder)</option>
-                      </select>
-                    </div>
-                  </div>
-                ))}
+                <SortableQuestionList
+                  questions={questions}
+                  onReorder={setQuestions}
+                  onUpdate={updateQuestion}
+                  onRemove={removeQuestion}
+                  onEditStart={() => setSaveError(false)}
+                />
 
                 <Button
                   type="button"
