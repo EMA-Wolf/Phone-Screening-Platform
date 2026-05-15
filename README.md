@@ -1,36 +1,163 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Phone Screening Platform
 
-## Getting Started
+A UI-only **Next.js** take-home for **Remotown GmbH / Aihrly Hiring** — a two-sided app where recruiters create phone screenings for seeded jobs and candidates complete them via a public link. There is **no backend**; jobs live in code and screenings/submissions persist in **localStorage**.
 
-First, run the development server:
+## Quick start
+
+**Requirements:** Node.js 20+ and npm.
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) (redirects to `/jobs`).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Other scripts:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build   # production build
+npm run start   # serve production build
+npm run lint    # ESLint
+```
 
-## Learn More
+## Tech stack
 
-To learn more about Next.js, take a look at the following resources:
+| Area | Choice |
+|------|--------|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript |
+| UI | React 19, functional components + hooks |
+| Styling | Tailwind CSS v4, shadcn/ui-style components |
+| Persistence | `localStorage` (`aihrly_screenings`, `aihrly_submissions`) |
+| Jobs data | Static seed in `src/data/jobs.ts` |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Out of scope (per brief):** backend/API, database, auth, real audio recording, real AI analysis.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Routes
 
-## Deploy on Vercel
+| Path | Audience | Purpose |
+|------|----------|---------|
+| `/jobs` | Recruiter | Jobs dashboard — cards, search, title filter, screening/applicant counts |
+| `/jobs/create-screening` | Recruiter | Create screening — pick job, generate/edit questions, save |
+| `/jobs/[jobId]` | Recruiter | Job detail — description, public link, applicants table |
+| `/jobs/[jobId]/applicants/[applicantId]` | Recruiter | Applicant responses + mock **Analyze** |
+| `/screening/[jobId]` | Candidate | Welcome → one question at a time → thank-you |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Data model & storage
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Jobs** — `src/data/jobs.ts` (4 seeded roles).
+
+**Screenings** — key `aihrly_screenings`, array of:
+
+```ts
+interface Screening {
+  id: string;
+  jobId: string;
+  createdAt: string;
+  questions: Question[];
+}
+```
+
+**Submissions** — key `aihrly_submissions`, array of:
+
+```ts
+interface Submission {
+  id: string;
+  jobId: string;
+  candidateName: string;
+  candidateEmail: string;
+  answers: Answer[];
+  submittedAt: string;
+}
+```
+
+Recruiter and candidate flows share these keys so submissions appear on the job detail page after a candidate finishes.
+
+**Helpers:** `src/lib/screenings-storage.ts`, `src/lib/submissions-storage.ts`, `src/data/default-screening-questions.ts` (6 template questions per job on generate).
+
+## Approach
+
+- **App Router** with server pages for static job params and **client components** wherever `localStorage` or interaction is required.
+- **Hydration pattern:** defer reading storage until after mount (`queueMicrotask` + `mounted` flag) to avoid SSR/client mismatches and satisfy the React Compiler lint rules around effects.
+- **Feature-oriented folders:** `src/components/jobs/`, `src/components/screening/`, `src/app/...` route shells, `src/types/` for shared shapes aligned with the PDF.
+- **Latest screening per job** drives the candidate flow (`latestScreeningForJob`); recruiters can save multiple versions over time.
+
+## What was built (core brief)
+
+### Recruiter
+
+- [x] **Jobs dashboard** — grid/list, job cards (title, location, type, screening count, applicant count), empty states, search by title, filter by job title toggles.
+- [x] **Create phone screening** — job select, generate questions (~600ms loading), edit text, text/audio type, add custom, remove, save to `localStorage`, return to job detail.
+- [x] **Job detail** — header, copyable screening URL, preview link, applicants list with view action, empty states, screening stats.
+- [x] **Applicant detail** — Q&A (text + audio placeholder UI), mock analysis with loading delay, recommendation badge, back navigation.
+
+### Candidate
+
+- [x] **Welcome** — job context, name/email **form** with validation (valid email shape, min name length).
+- [x] **Question flow** — one question at a time, progress bar and “X of Y”, written/audio toggle (audio is demo placeholder), **Previous** supported.
+- [x] **Thank-you** — submission summary, persist to `aihrly_submissions`, download transcript.
+
+### UX / quality (from brief)
+
+- [x] Responsive layouts and empty states.
+- [x] Form validation on candidate welcome step.
+- [x] Focus-visible styles on interactive controls.
+- [x] Component split (dashboard, cards, create flow, job/applicant views, screening experience).
+- [x] TypeScript types for jobs, screenings, submissions, analysis.
+
+## Nice-to-have / bonus (partial)
+
+| Item | Status |
+|------|--------|
+| Search/filter on jobs | Done (search + title funnel) |
+| Applicant count on job cards | Done |
+| Back navigation in candidate flow | Done |
+| Drag-and-drop question reorder | Not implemented |
+| Dedicated light/dark mode toggle in UI | Not implemented (styles support `dark:` via system/class, no toggle) |
+| Framer Motion on question transitions | Not implemented |
+| Unit tests (Jest + RTL) | Not implemented |
+| Working MediaRecorder audio | Not implemented (placeholder + optional text note) |
+
+## Trade-offs & assumptions
+
+1. **Multiple screenings per job** — Candidates use the **latest** saved screening by `createdAt`. Older versions remain in storage but are not offered as a picker on the public link.
+2. **“Started” applicants** — Only **completed** submissions (saved on thank-you) appear in the recruiter list; partial in-progress answers are not stored.
+3. **Audio answers** — UI supports audio type; demo stores a placeholder string or optional note, not real recordings.
+4. **Analyze** — Static mock in `src/lib/mock-analysis.ts` with ~1.6s delay; no API.
+5. **Company name on candidate welcome** — “TechFlow Systems” is display copy for the mock UI; job title/location come from seed data.
+6. **Generate questions** — Template list tailored by job title, not per-job static maps (acceptable per brief).
+
+## Project structure (high level)
+
+```
+src/
+├── app/                    # Routes (jobs, screening, create-screening)
+├── components/
+│   ├── jobs/               # Dashboard, cards, create flow
+│   ├── screening/          # Candidate experience
+│   └── ui/                 # Button, Card, etc.
+├── data/                   # jobs.ts, default-screening-questions.ts
+├── lib/                    # localStorage + mock analysis
+└── types/                  # Job, Screening, Submission, Analysis
+```
+
+## End-to-end demo
+
+1. Open `/jobs` → **Create Phone Screening** → pick a job → **Generate** → edit if needed → **Save**.
+2. Open the job → copy **screening link** or use **Preview screening**.
+3. Complete the candidate flow (valid name + email, answer all questions).
+4. Return to job detail → open applicant → **Analyze responses**.
+
+To reset client data, clear `aihrly_screenings` and `aihrly_submissions` in DevTools → Application → Local Storage.
+
+## Live preview
+
+**Deployed app:** _[https://phone-screening-five.vercel.app/](https://phone-screening-five.vercel.app/)_
+
+**Time spent:** _[fill in, e.g. ~24 hours]_
+
+
+---
+
+**Remotown GmbH / Aihrly Hiring** — Frontend take-home, NSS 2026/2027. Confidential assessment materials.
