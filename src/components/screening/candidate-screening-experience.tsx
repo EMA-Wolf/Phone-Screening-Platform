@@ -648,7 +648,7 @@ export function CandidateScreeningExperience({ job }: { job: Job }) {
               <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-400">
                 Progress: {questionIndex + 1} / {total} Questions Completed
               </p>
-            <h1 className="mt-4 text-2xl font-bold leading-snug tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-3xl">
+            <h1 className="mt-4 text-2xl font-bold leading-snug tracking-tight text-zinc-900 dark:text-zinc-900 sm:text-3xl">
               {currentQuestion.text}
             </h1>
             <p className="mt-4 text-sm italic leading-relaxed text-zinc-500 dark:text-zinc-400">
@@ -702,7 +702,7 @@ export function CandidateScreeningExperience({ job }: { job: Job }) {
                 </div>
               ) : (
                 <div className="mt-4 space-y-4 rounded-xl border border-zinc-200 bg-zinc-50/80 p-6 dark:border-zinc-800 dark:bg-zinc-900/40">
-                  <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                  <p className="text-sm text-zinc-600 dark:text-zinc-50">
                     Audio capture is a UI placeholder in this demo. Add an
                     optional note below if you like; we&apos;ll still record this
                     answer as an audio-type response.
