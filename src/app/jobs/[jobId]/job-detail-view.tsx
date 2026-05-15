@@ -11,7 +11,9 @@ import {
   ListChecks,
   MapPin,
   MoreHorizontal,
+  Plus,
   Search,
+  Sparkles,
   Users,
 } from "lucide-react";
 
@@ -210,6 +212,37 @@ export function JobDetailView({ job }: JobDetailViewProps) {
           {job.description}
         </p>
 
+        {hydrated && screenings.length === 0 ? (
+          <Card className="mt-6 border-dashed border-amber-500/40 bg-amber-500/5 shadow-sm dark:border-amber-500/30 dark:bg-amber-500/10">
+            <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+              <div className="flex gap-4">
+                <div className="flex size-11 shrink-0 items-center justify-center rounded-full border border-amber-500/30 bg-amber-500/10 dark:bg-amber-500/20">
+                  <Sparkles
+                    className="size-5 text-amber-700 dark:text-amber-400"
+                    aria-hidden
+                  />
+                </div>
+                <div className="space-y-1">
+                  <p className="font-semibold text-foreground">
+                    No phone screening for this role yet
+                  </p>
+                  <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
+                    Create a screening to generate questions, then share the
+                    public link with candidates. Until you save one, the
+                    candidate flow will not show any questions.
+                  </p>
+                </div>
+              </div>
+              <Button asChild className="shrink-0 gap-2">
+                <Link href={`/jobs/create-screening?jobId=${job.id}`}>
+                  <Plus className="size-4" aria-hidden />
+                  Create phone screening
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        ) : null}
+
         <section
           className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
           aria-label="Job summary"
@@ -235,8 +268,9 @@ export function JobDetailView({ job }: JobDetailViewProps) {
                 Public screening link
               </CardTitle>
               <CardDescription className="text-xs leading-relaxed">
-                Share this URL with candidates. It opens the guided flow for
-                this job (no login in this demo).
+                {latest
+                  ? "Share this URL with candidates. It opens the guided flow for this job (no login in this demo)."
+                  : "Create a screening first so candidates see your questions when they open this link."}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2 pt-0">

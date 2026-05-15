@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Info, Loader2, Plus, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,14 @@ type CreateScreeningFlowProps = {
 
 export function CreateScreeningFlow({ jobs }: CreateScreeningFlowProps) {
   const router = useRouter();
-  const [jobId, setJobId] = useState("");
+  const searchParams = useSearchParams();
+  const jobIdFromQuery = useMemo(() => {
+    const fromQuery = searchParams.get("jobId");
+    if (!fromQuery) return "";
+    return jobs.some((j) => j.id === fromQuery) ? fromQuery : "";
+  }, [searchParams, jobs]);
+  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+  const jobId = selectedJobId ?? jobIdFromQuery;
   const [phase, setPhase] = useState<Phase>("setup");
   const [questions, setQuestions] = useState<Question[]>([]);
   const [generating, setGenerating] = useState(false);
@@ -151,7 +158,7 @@ export function CreateScreeningFlow({ jobs }: CreateScreeningFlowProps) {
                   id="create-screening-job"
                   value={jobId}
                   disabled={phase === "questions"}
-                  onChange={(e) => setJobId(e.target.value)}
+                  onChange={(e) => setSelectedJobId(e.target.value)}
                   className={cn(
                     "h-11 w-full rounded-lg border border-border bg-card px-3 text-sm outline-none transition-[box-shadow,border-color] focus-visible:ring-2 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-60"
                   )}
