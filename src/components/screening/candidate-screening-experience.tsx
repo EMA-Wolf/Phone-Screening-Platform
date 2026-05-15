@@ -347,7 +347,6 @@ export function CandidateScreeningExperience({ job }: { job: Job }) {
   };
 
   const wc = wordCount(draftText);
-
   if (!hydrated) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-white dark:bg-zinc-950">
@@ -890,7 +889,7 @@ export function CandidateScreeningExperience({ job }: { job: Job }) {
               </CardFooter>
             </Card>
 
-            <div className="space-y-3 text-center">
+            {/* <div className="space-y-3 text-center">
               <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
                 What happens next?
               </h2>
@@ -944,7 +943,7 @@ export function CandidateScreeningExperience({ job }: { job: Job }) {
                   </div>
                 );
               })}
-            </div>
+            </div> */}
 
             <div className="flex flex-col items-center gap-4 pt-4">
               <Button

@@ -13,6 +13,7 @@ import {
 
 import { JobCard } from "@/components/jobs/jobCards";
 import { Button } from "@/components/ui/button";
+import { loadSubmissions } from "@/lib/submissions-storage";
 import { loadScreenings } from "@/lib/screenings-storage";
 import { cn } from "@/lib/utils";
 import type { Job } from "@/types/jobs.types";
@@ -43,6 +44,17 @@ export function JobsDashboard({ jobs }: JobsDashboardProps) {
     void pathname;
     if (!mounted || typeof window === "undefined") return {};
     const list = loadScreenings();
+    const counts: Record<string, number> = {};
+    for (const s of list) {
+      counts[s.jobId] = (counts[s.jobId] ?? 0) + 1;
+    }
+    return counts;
+  }, [mounted, pathname]);
+
+  const submissionsByJob = useMemo(() => {
+    void pathname;
+    if (!mounted || typeof window === "undefined") return {};
+    const list = loadSubmissions();
     const counts: Record<string, number> = {};
     for (const s of list) {
       counts[s.jobId] = (counts[s.jobId] ?? 0) + 1;
@@ -348,7 +360,7 @@ export function JobsDashboard({ jobs }: JobsDashboardProps) {
                 <JobCard
                   job={job}
                   screeningCount={screeningsByJob[job.id] ?? 0}
-                  applicantCount={0}
+                  applicantCount={submissionsByJob[job.id] ?? 0}
                 />
               </li>
             ))}
